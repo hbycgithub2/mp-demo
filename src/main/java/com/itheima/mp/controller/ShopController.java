@@ -5,10 +5,9 @@ import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import com.itheima.mp.domain.dto.ShopDTO;
 import com.itheima.mp.service.IShopService;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.InputStream;
@@ -33,12 +32,38 @@ public class ShopController {
 
     private final IShopService shopService;
 
+    /**
+     * 查找所有商店信息
+     *
+     * @return 所有商店信息的列表
+     */
     @GetMapping
     public List<ShopDTO> findAll(){
         return shopService.list()
                 .stream()
                 .map(ShopDTO::new)
                 .peek(this::downloadImage)
+                .collect(Collectors.toList());
+    }
+
+
+    /**
+     * 扣减用户余额接口
+     *
+     * @param id 用户id
+     * @param money 扣减的金额
+     */
+    @PutMapping("/{id}/deduction/{money}")
+    public void deductBalance(
+            @ApiParam("用户id") @PathVariable("id") Long id,
+            @ApiParam("扣减的金额") @PathVariable("money") Integer money){
+        shopService.list()
+                // 将商店信息转换为ShopDTO对象
+                .stream()
+                .map(ShopDTO::new)
+                // 调用downloadImage方法，下载商店的图片
+                .peek(this::downloadImage)
+                // 将转换后的ShopDTO对象收集到一个List中
                 .collect(Collectors.toList());
     }
 

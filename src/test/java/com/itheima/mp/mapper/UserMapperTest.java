@@ -18,11 +18,15 @@ class UserMapperTest {
     @Autowired
     private UserMapper userMapper;
 
+    /**
+     * INSERT INTO tb_user ( id, username, password, phone, info, balance, create_time, update_time ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )
+     * 5(Long), Tom(String), 123(String), 18688990013(String), {"age":24,"intro":"英文老师","gender":"female"}(String), 200(Integer), 2025-04-04T12:13:55.661884300(LocalDateTime), 2025-04-04T12:13:55.661884300(LocalDateTime)
+     */
     @Test
     void testInsert() {
         User user = new User();
-        // user.setId(5L);
-        user.setUsername("ErGouZi");
+         user.setId(5L);
+        user.setUsername("Tom");
         user.setPassword("123");
         user.setPhone("18688990013");
         user.setBalance(200);
@@ -32,25 +36,40 @@ class UserMapperTest {
         userMapper.insert(user);
     }
 
+    /**
+     * SELECT id,username,password,phone,info,status,balance,create_time,update_time FROM tb_user WHERE id=?
+     * 5(Long)
+     */
     @Test
     void testSelectById() {
         User user = userMapper.selectById(5L);
         System.out.println("user = " + user);
     }
 
-
+    /**
+     * SELECT id,username,password,phone,info,status,balance,create_time,update_time FROM tb_user WHERE id IN ( ? , ? , ? , ? )
+     * 1(Long), 2(Long), 3(Long), 4(Long)
+     */
     @Test
     void testQueryByIds() {
         List<User> users = userMapper.selectBatchIds(List.of(1L, 2L, 3L, 4L));
         users.forEach(System.out::println);
     }
 
+    /**
+     * SELECT * FROM tb_user WHERE id IN ( ? , ? , ? , ? ) LIMIT 10
+     * 1(Long), 2(Long), 3(Long), 4(Long)
+     */
     @Test
     void testQueryByIds2() {
         List<User> users = userMapper.queryUserByIds(List.of(1L, 2L, 3L, 4L));
         users.forEach(System.out::println);
     }
 
+    /**
+     * UPDATE tb_user SET balance=? WHERE id=?
+     * 200(Integer), 5(Long)
+     */
     @Test
     void testUpdateById() {
         User user = new User();
@@ -59,11 +78,19 @@ class UserMapperTest {
         userMapper.updateById(user);
     }
 
+    /**
+     * DELETE FROM tb_user WHERE id=?
+     * 5(Long)
+     */
     @Test
     void testDeleteUser() {
         userMapper.deleteById(5L);
     }
 
+    /**
+     * SELECT id,username,info,balance FROM tb_user WHERE (username LIKE ? AND balance >= ?)
+     * %o%(String), 1000(Integer)
+     */
     @Test
     void testQueryWrapper() {
         // 1.构建查询条件
@@ -76,6 +103,10 @@ class UserMapperTest {
         users.forEach(System.out::println);
     }
 
+    /**
+     * SELECT id,username,info,balance FROM tb_user WHERE (username LIKE ? AND balance >= ?)
+     * %o%(String), 1000(Integer)
+     */
     @Test
     void testLambdaQueryWrapper() {
         // 1.构建查询条件
@@ -88,6 +119,10 @@ class UserMapperTest {
         users.forEach(System.out::println);
     }
 
+    /**
+     * UPDATE tb_user SET balance=? WHERE (username = ?)
+     * 2000(Integer), jack(String)
+     */
     @Test
     void testUpdateByQueryWrapper() {
         // 1.要更新的数据
@@ -99,6 +134,10 @@ class UserMapperTest {
         userMapper.update(user, wrapper);
     }
 
+    /**
+     * UPDATE tb_user SET balance = balance - 200 WHERE (id IN (?,?,?))
+     * 1(Long), 2(Long), 4(Long)
+     */
     @Test
     void testUpdateWrapper() {
         List<Long> ids = List.of(1L, 2L, 4L);
@@ -108,6 +147,10 @@ class UserMapperTest {
         userMapper.update(null, wrapper);
     }
 
+    /**
+     * UPDATE tb_user SET balance = balance - ? WHERE (id IN (?,?,?))
+     * 200(Integer), 1(Long), 2(Long), 4(Long)
+     */
     @Test
     void testCustomSqlUpdate() {
         // 1.更新条件

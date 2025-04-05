@@ -18,6 +18,10 @@ class IUserServiceTest {
     @Autowired
     private IUserService userService;
 
+    /**
+     * INSERT INTO tb_user ( username, password, phone, info, balance, create_time, update_time ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+     * LiLei(String), 123(String), 18688990013(String), {"age":24,"intro":"英文老师","gender":"female"}(String), 200(Integer), 2025-04-04T13:26:45.042398100(LocalDateTime), 2025-04-04T13:26:45.042398100(LocalDateTime)
+     */
     @Test
     void testSaveUser() {
         User user = new User();
@@ -33,6 +37,10 @@ class IUserServiceTest {
         userService.save(user);
     }
 
+    /**
+     * SELECT id,username,password,phone,info,status,balance,create_time,update_time FROM tb_user WHERE id IN ( ? , ? , ? )
+     * 1(Long), 2(Long), 4(Long)
+     */
     @Test
     void testQuery() {
         List<User> users = userService.listByIds(List.of(1L, 2L, 4L));

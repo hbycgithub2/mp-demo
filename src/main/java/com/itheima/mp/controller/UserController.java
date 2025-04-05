@@ -1,9 +1,14 @@
 package com.itheima.mp.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.convert.ConverterRegistry;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
+import com.itheima.mp.converter.UserConverter;
 import com.itheima.mp.domain.dto.PageDTO;
 import com.itheima.mp.domain.dto.UserFormDTO;
 import com.itheima.mp.domain.po.User;
+import com.itheima.mp.domain.po.UserInfo;
 import com.itheima.mp.domain.query.UserQuery;
 import com.itheima.mp.domain.vo.UserVO;
 import com.itheima.mp.service.IUserService;
@@ -13,6 +18,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @Api(tags = "用户管理接口")
@@ -20,14 +26,27 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
-
+    @Resource
+    private UserConverter userConverter;
     private final IUserService userService;
-
     @ApiOperation("新增用户接口")
     @PostMapping
     public void saveUser(@RequestBody UserFormDTO userDTO){
+        User user = userConverter.toUser(userDTO);
+        // 2.新增
+        userService.save(user);
+    }
+
+    @ApiOperation("新增用户接口2")
+    @PostMapping
+    public void saveUser2(@RequestBody UserFormDTO userDTO){
+        UserInfo info = new UserInfo();
+        if (null != userDTO && StrUtil.isNotBlank(userDTO.getInfo())) {
+            info = JSONUtil.parseObj(userDTO.getInfo()).toBean(UserInfo.class);
+        }
         // 1.把DTO拷贝到PO
-        User user = BeanUtil.copyProperties(userDTO, User.class);
+        User user = BeanUtil.copyProperties(userDTO, User.class,"info");
+        user.setInfo(info);
         // 2.新增
         userService.save(user);
     }
