@@ -90,6 +90,10 @@ class IUserServiceTest {
         System.out.println("耗时：" + (e - b));
     }
 
+    void test1(){
+        System.out.println("test1");
+    }
+
     @Test
     void testPageQuery() {
         int pageNo = 1, pageSize = 2;
