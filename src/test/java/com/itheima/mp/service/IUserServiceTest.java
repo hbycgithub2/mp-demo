@@ -96,6 +96,9 @@ class IUserServiceTest {
 void master3(){
     System.out.println("master3");
 }
+    void test5(){
+        System.out.println("test5");
+    }
     @Test
     void testPageQuery() {
         int pageNo = 1, pageSize = 2;
